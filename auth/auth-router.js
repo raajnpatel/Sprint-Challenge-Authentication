@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const secret = require('../api/secret');
 
 const Users = require("./auth-model");
 
@@ -15,6 +16,7 @@ router.post("/register", (req, res) => {
                 .json(saved);
         })
         .catch(error => {
+            console.log(error);
             res
                 .status(500)
                 .json(error);
@@ -39,7 +41,10 @@ router.post("/login", (req, res) => {
             }
         })
         .catch(error => {
-            res.status(500).json(error);
+            console.log(error);
+            res
+                .status(500)
+                .json(error);
         });
 });
 
@@ -47,12 +52,12 @@ function generateToken(user) {
     const payload = {
         username: user.username
     };
-    const secret = process.env.JWT_SECRET || 'baby nugget olive';
+    const secrets = secret.jwtSecret;
 
     const options = {
         expiresIn: "20s"
     };
-    return jwt.sign(payload, secret, options);
+    return jwt.sign(payload, secrets, options);
 }
 
 module.exports = router;
